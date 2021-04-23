@@ -172,7 +172,7 @@ person.name = 'Matt';  // ok
 
 ### 数据类型
 
-ECMAScript 有 6 种简单数据类型（也称为原始类型）： Undefined 、 Null 、 Boolean 、 Number 、String 和 Symbol 。。还有一种复杂数据类型叫 Object （对象）
+ECMAScript 有 6 种简单数据类型（也称为原始类型）： Undefined 、 Null 、 Boolean 、 Number 、String 和 Symbol 。还有一种复杂数据类型叫 Object （对象）
 
 typeof操作符用于确定变量的数据类型。
 
@@ -418,5 +418,192 @@ let pageHTML = `
     <span>Jake</span> 
   </a> 
 </div>`; 
+```
+
+#### 6.Symbol 类型
+
+* 符号是**原始值**，且符号实例是**唯一**、**不可变**的。
+* 符号的用途是确保对象属性使用**唯一标识符**，不会发生属性冲突的危险
+
+6.1基本用法
+
+使用Symbol()函数初始化
+
+```javascript
+let sym = Symbol(); 
+console.log(typeof sym); // symbol 
+// 可以传入一个字符串参数作为对符号的描述（description）
+let genericSymbol = Symbol(); 
+let otherGenericSymbol = Symbol(); 
+ 
+let fooSymbol = Symbol('foo'); 
+let otherFooSymbol = Symbol('foo'); 
+ 
+console.log(genericSymbol == otherGenericSymbol);  // false 
+console.log(fooSymbol == otherFooSymbol);          // false 
+
+// 符号没有字面量语法
+let genericSymbol = Symbol(); 
+console.log(genericSymbol);  // Symbol() 
+let fooSymbol = Symbol('foo'); 
+console.log(fooSymbol);      // Symbol(foo); 
+```
+
+要创建 Symbol() 实例并将其用作对象的新属性，就可以保证它不会覆盖已有的对象属性，无论是符号属性还是字符串属性.
+
+Symbol() 函数不能与 new 关键字一起作为构造函数使用
+
+#### 7.Object类型
+
+对象其实就是一组数据和功能的集合。对象通过 new 操作符后跟对象类型的名称来创建。
+
+每个 Object 实例都有如下属性和方法：
+
+* `constructor` ：用于创建当前对象的函数。在前面的例子中，这个属性的值就是 Object() 函数。 
+* `hasOwnProperty(propertyName) `：用于判断当前对象实例（不是原型）上是否存在给定的属性。要检查的属性名必须是字符串（如 o.hasOwnProperty("name") ）或符号。 
+* `isPrototypeOf(object)` ：用于判断当前对象是否为另一个对象的原型。（第 8 章将详细介绍原型。）
+* `propertyIsEnumerable(propertyName)` ：用于判断给定的属性是否可以使用（本章稍后讨论的） for-in 语句枚举。与 hasOwnProperty() 一样，属性名必须是字符串。 
+* `toLocaleString() `：返回对象的字符串表示，该字符串反映对象所在的本地化执行环境。 
+* `toString()` ：返回对象的字符串表示。 
+* `valueOf()` ：返回对象对应的字符串、数值或布尔值表示。通常与 `toString()` 的返回值相同。 
+
+### 操作符
+
+#### 1.一元操作符
+
+前缀操作符: 前缀递增操作符`++`, 前缀递减操作符`--`，变量的值在语句被求值之前改变
+
+```javascript
+let age = 29; 
+let anotherAge = --age + 2; 
+ 
+console.log(age);         // 28 
+console.log(anotherAge);  // 30
+```
+
+后缀操作符在语句被求值后才发生。
+
+```javascript
+let num1 = 2; 
+let num2 = 20; 
+let num3 = num1-- + num2; 
+let num4 = num1 + num2; 
+console.log(num3);  // 22 
+console.log(num4);  // 21 
+```
+
+#### 2.位操作符
+
+ECMAScript中的所有数值都以 IEEE  754  64 位格式存储，但位操作并不直接应用到 64 位表示，而是先把值转换为32 位整数，再进行位操作，之后再把结果转换为 64 位。故只需要考虑 32 位整数即可。
+
+正值以有符号整数表示，前 31 位表示整数值，第 32 位表示数值的符号
+
+负值以一种称为二补数（或补码）的二进制编码存储。补码的计算步骤：
+
+(1) 确定绝对值的二进制表示（如，对于18，先确定 18 的二进制表示）； 
+(2) 找到数值的一补数（或反码），换句话说，就是每个 0 都变成 1，每个 1 都变成 0； 
+(3) 给结果加 1。 
+
+**按位`非`~**
+
+按位非的最终效果是对数值取反并减 1
+
+```javascript
+let num1 = 25;      // 二进制 00000000000000000000000000011001 
+let num2 = ~num1;   // 二进制 11111111111111111111111111100110 
+console.log(num2);  // -26 
+```
+
+**按位与`&`**
+
+按位与就是将两个数的每一个位对齐，然后基于真值表中的规则，对每一位执行相应的与操作.
+
+```javascript
+let result = 25 & 3;  
+console.log(result); // 1 
+```
+
+计算过程如下
+
+![1619168662429](image\ch3-1.png)
+
+所以结果为1
+
+**按位或`|`**
+
+与按位与相似。
+
+**按位异或 `^`**
+
+与按位与相似。
+
+**左移`<<`**
+
+注意，左移会保留它所操作数值的符号。
+
+**有符号右移`>>`**
+
+将数值的所有 32 位都向右移，同时保留符号（正或负）。右移后左边的空位会用符号位的值来填充。
+
+**无符号右移`>>>`**
+
+与有符号右移不同，无符号右移会给**空位补 0**，而不管符号位是什么。
+
+#### 3.布尔操作符
+
+逻辑非`!`， 逻辑或`||`，逻辑与`&&`
+
+#### 4.乘性操作符 
+
+ECMAScript 定义了 3 个乘性操作符：乘法`*`、除法`/`和取模`%`
+
+#### 5.指数操作符 
+
+ECMAScript 7 新增了指数操作符`**`，与` Math.pow()` 结果是一样的： 
+
+#### 6.加性操作符
+
+如果两个操作数都是数值，加法操作符执行加法运算并根据如下规则返回结果： 
+ 如果有任一操作数是 NaN ，则返回 NaN ； 
+ 如果是 Infinity 加 Infinity ，则返回 Infinity ； 
+ 如果是 -Infinity 加 -Infinity ，则返回 -Infinity ； 
+ 如果是 Infinity 加 -Infinity ，则返回 NaN ； 
+ 如果是 +0 加 +0 ，则返回 +0 ； 
+ 如果是 -0 加 +0 ，则返回 +0 ； 
+ 如果是 -0 加 -0 ，则返回 -0 。 
+如果有一个操作数是字符串，则要应用如下规则： 
+ 如果两个操作数都是字符串，则将第二个字符串拼接到第一个字符串后面； 
+ 如果只有一个操作数是字符串，则将另一个操作数转换为**字符串**，再将两个字符串拼接在一起。 
+
+#### 7.相等操作符
+
+**等于`==`和不等于`!=`**
+
+这两个操作符都会先进行类型转换（通常称为**强制类型转换**）再确定操作数是否相等。
+
+ 如果任一操作数是布尔值，则将其转换为数值再比较是否相等。 false 转换为 0， true 转换
+为 1。 
+ 如果一个操作数是字符串，另一个操作数是数值，则尝试将字符串转换为数值，再比较是否
+相等。 
+ 如果一个操作数是对象，另一个操作数不是，则调用对象的 valueOf() 方法取得其原始值，再
+根据前面的规则进行比较。 
+
+  null 和 undefined 相等。 
+  null 和 undefined 不能转换为其他类型的值再进行比较。 
+ 如果有任一操作数是 NaN ，则相等操作符返回 false ，不相等操作符返回 true 。记住：即使两
+个操作数都是 NaN ，相等操作符也返回 false ，因为按照规则， NaN 不等于 NaN 。 
+ 如果两个操作数都是对象，则比较它们是不是同一个对象。如果两个操作数都指向同一个对象，
+则相等操作符返回 true 。否则，两者不相等。 
+
+**全等`===`和不全等`!==`**
+
+只有两个操作数在不转换的前提下相等才返回 true
+
+#### 8.条件操作符`?`
+
+语法和Java中的一样
+
+```javascript
+variable = boolean_expression ? true_value : false_value; 
 ```
 
